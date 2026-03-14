@@ -1,0 +1,56 @@
+import { useAuthStore } from "@/store/useAuthStore";
+import { useChatStore } from "@/store/useChatStore";
+import type { Conversation } from "@/types/chat";
+import ChatCard from "./ChatCard";
+import { cn } from "@/lib/utils";
+
+const GroupChatCard = ({ convo }: { convo: Conversation }) => {
+  const { user } = useAuthStore();
+  const { activeConversationId, setActiveConversation, messages } =
+    useChatStore();
+  if (!user) return "";
+  const unreadCount = convo.unreadCounts[user._id];
+  const name = convo.group?.name ?? "";
+
+  const handleSelectConversation = async (id: string) => {
+    setActiveConversation(id);
+    if (!messages[id]) {
+      // todo: fetch message
+    }
+  };
+  return (
+    <ChatCard
+      convoId={convo._id}
+      name={name}
+      timestamp={
+        convo.lastMessage?.createdAt
+          ? new Date(convo.lastMessage?.createdAt)
+          : undefined
+      }
+      isActive={activeConversationId === convo._id}
+      onSelect={setActiveConversation}
+      unreadCount={unreadCount}
+      leftSection={
+        <>
+          {/* todo: user avatar */}
+          {/* todo: status badge */}
+          {/* todo: unread count */}
+        </>
+      }
+      subtitle={
+        <p
+          className={cn(
+            "text-sm truncate",
+            unreadCount > 0
+              ? "font-medium text-foreground"
+              : "text-mote-foreground",
+          )}
+        >
+          {convo.participants.length} thành viên
+        </p>
+      }
+    />
+  );
+};
+
+export default GroupChatCard;

@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 export const useThemeStore = create<ThemeState>()(
   persist(
-    (set, get) => ({
+    (set, get) => ({//key
       isDark: false,
       toggleTheme() {
         const newValue = !get().isDark;
@@ -23,7 +23,7 @@ export const useThemeStore = create<ThemeState>()(
         }
       },
     }),
-    {
+    {//value
       name: "theme-storage",
     },
   ),

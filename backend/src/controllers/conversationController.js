@@ -100,9 +100,9 @@ export const getConversation = async (req, res) => {
                 path: 'seenBy',
                 select: 'displayName avatarUrl'
             });
-        const formatted = conversations.map((convo) => {
+        const formated = conversations.map((convo) => {
             const participants = (convo.participants || []).map((p) => ({
-                _id: p.user?._id,
+                _id: p.userId?._id,
                 displayName: p.userId?.displayName,
                 avatarUrl: p.userId?.avatarUrl ?? null,
                 joinedAt: p.joinedAt
@@ -115,7 +115,7 @@ export const getConversation = async (req, res) => {
 
             }
         })
-        return res.status(200).json({ conversations: formatted });
+        return res.status(200).json({ conversations: formated });
     } catch (error) {
         console.log("Lỗi khi lấy Conversation", error);
         return res.status(500).json({ message: "Lỗi hệ thống" })
@@ -129,7 +129,7 @@ export const getMessages = async (req, res) => {
         const query = { conversationId };
 
         if (cursor) { // nếu còn cursor thì query thêm tin nhắn cũ
-            query.createeAt = { $lt: new Date(cursor) }; // less than -> convert cursor to date
+            query.createdAt = { $lt: new Date(cursor) }; // less than -> convert cursor to date
         }
         let messages = await Message.find(query)
             .sort({ createdAt: -1 })
@@ -138,8 +138,8 @@ export const getMessages = async (req, res) => {
         let nextCursor = null;
         if (messages.length > Number(limit)) {
             const nextMessages = messages[messages.length - 1];
-            nextCursor = nextMessages.createdAt.toIOString();
-            message.pop();
+            nextCursor = nextMessages.createdAt.toISOString();
+            messages.pop();
         }
         messages = messages.reverse();
         res.status(200).json({ messages, nextCursor })
