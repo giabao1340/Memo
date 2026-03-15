@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const AddFriendModal = () => {
-  return (
-    <div>AddFriendModal</div>
-  )
-}
+  return <div></div>;
+};
 
-export default AddFriendModal
+export default AddFriendModal;

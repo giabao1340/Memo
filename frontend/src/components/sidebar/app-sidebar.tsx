@@ -19,14 +19,13 @@ import GroupChatList from "../chat/GroupChatList";
 import AddFriendModal from "../chat/AddFriendModal";
 import DirectMessageList from "../chat/DirectMessageList";
 import { useThemeStore } from "@/store/useThemeStore";
-import { Button } from "../ui/button";
-import { authService } from "@/services/authService";
+
+import { useAuthStore } from "@/store/useAuthStore";
+import { NavUser } from "./nav-user";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { isDark, toggleTheme } = useThemeStore();
-  const handleLogOut = async () => {
-    await authService.signOut();
-  };
+  const user = useAuthStore((state) => state.user);
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -58,7 +57,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       {/* Content */}
-      <Button onClick={handleLogOut}>Logout</Button>
       <SidebarContent>
         {/* Tạo đoạn chat mới */}
         <SidebarGroup>
@@ -88,7 +86,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
       {/* Footer */}
-      <SidebarFooter>{/* <NavUser user={data.user} /> */}</SidebarFooter>
+      <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>
     </Sidebar>
   );
 }

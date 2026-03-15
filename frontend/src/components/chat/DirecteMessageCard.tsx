@@ -14,16 +14,14 @@ const DirecteMessageCard = ({ convo }: { convo: Conversation }) => {
 
   if (!user) return null;
 
-  const otherUser = convo.participants.find((p) => p._id !== user._id);// Tìm người còn lại trong cuộc trò chuyện
-  console.log("participants:", convo.participants);
-  console.log("current user:", user._id);
+  const otherUser = convo.participants.find((p) => p._id !== user._id); // Tìm người còn lại trong cuộc trò chuyện
   if (!otherUser) return null;
   const unreadCount = convo.unreadCounts[user._id];
   const lastMessage = convo.lastMessage?.content || ""; // trả về content hoặc chuỗi rỗng
   const handleSelectConversation = async (id: string) => {
     setActiveConversation(id);
     if (!messages[id]) {
-      //
+      // fetch messaages
     }
   };
   return (
@@ -36,7 +34,7 @@ const DirecteMessageCard = ({ convo }: { convo: Conversation }) => {
           : undefined
       }
       isActive={activeConversationId === convo._id}
-      onSelect={setActiveConversation}
+      onSelect={handleSelectConversation}
       unreadCount={unreadCount}
       leftSection={
         <>
@@ -46,6 +44,7 @@ const DirecteMessageCard = ({ convo }: { convo: Conversation }) => {
             avatarUrl={otherUser.avatarUrl ?? undefined}
           />
           <StatusBadge status="offline" />
+          {/* socket io */}
           {unreadCount > 0 && <UnreadCountBadge unreadCount={unreadCount} />}
         </>
       }
@@ -58,7 +57,7 @@ const DirecteMessageCard = ({ convo }: { convo: Conversation }) => {
               : "text-mote-foreground",
           )}
         >
-          {lastMessage[0]}
+          {lastMessage}
         </p>
       }
     />

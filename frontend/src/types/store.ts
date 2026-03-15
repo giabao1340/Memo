@@ -29,15 +29,19 @@ export interface ThemeState {
 
 export interface ChatState {
   conversations: Conversation[];
-  messages: Record<string, {
-    items: Message[],
-    hasMore: boolean;
-    nextCursor?: string | null;
-  }>;
+  messages: Record<
+    string,
+    {
+      items: Message[];
+      hasMore: boolean;
+      nextCursor?: string | null;
+    }
+  >;
   activeConversationId: string | null;
-  loading: boolean;
+  convoLoading: boolean;
+  messageLoading: boolean;
   reset: () => void;
   setActiveConversation: (id: string | null) => void;
   fetchConversation: () => Promise<void>;
+  fetchMessages: (conversationId?: string) => Promise<void>;
 }
-
