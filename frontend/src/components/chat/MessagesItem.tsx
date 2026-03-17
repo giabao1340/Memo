@@ -21,29 +21,29 @@ const MessagesItem = ({
 }: MessageItemProps) => {
   const prev = messages[index - 1];
 
-  const isGroupBeak =
+  const isGroupBreak =
     index === 0 ||
     message.senderId != prev?.senderId ||
     new Date(message.createdAt).getTime() -
       new Date(prev?.createdAt || 0).getTime() >
       3000; // Hơn 5 phút thì tách tin nhắn
   const participant = selectedConvo.participants.find(
-    (p: Participant) => p._id.toString === message.senderId.toString,
+    (p: Participant) => p._id.toString() === message.senderId.toString(),
   );
   return (
     <div
       className={cn(
-        "flex gap-2 message-bounce",
+        "flex gap-3 message-bounce mt-1",
         message.isOwn ? "justify-end" : "justify-start",
       )}
     >
       {/*Avatar  */}
       {!message.isOwn && (
         <div className="w-8">
-          {isGroupBeak && (
+          {isGroupBreak && (
             <UserAvatar
               type="chat"
-              name={participant?.displayName ?? "Memo"}
+              name={participant?.displayName ?? "Moji"}
               avatarUrl={participant?.avatarUrl ?? undefined}
             />
           )}
@@ -59,7 +59,9 @@ const MessagesItem = ({
         <Card
           className={cn(
             "p-3",
-            message.isOwn ? "chat-pubble-sent border-0" : "bg-chat-bubble-sent",
+            message.isOwn
+              ? "chat-bubble-sent border-0"
+              : "chat-bubble-received",
           )}
         >
           <p className="text-sm leading-relaxed break-words">
@@ -67,7 +69,7 @@ const MessagesItem = ({
           </p>
         </Card>
         {/* Timestamp */}
-        {isGroupBeak && (
+        {isGroupBreak && (
           <span className="text-xs text-muted-foreground px-1">
             {formatMessageTime(new Date(message.createdAt))}
           </span>

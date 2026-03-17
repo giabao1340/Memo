@@ -39,9 +39,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
             >
               <a href="#">
-                <div className="flex w-full item-center justify-between px-2">
+                <div className="flex w-full items-center justify-between px-2">
                   <h1 className="text-xl font-bold text-white">Memo</h1>
-                  <div className="flex item-center gap-2">
+                  <div className="flex items-center gap-2">
                     <Sun className="size-4 text-white/80" />
                     <Switch
                       checked={isDark}
