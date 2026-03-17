@@ -1,5 +1,4 @@
-import type { Message } from "react-hook-form";
-import type { Conversation } from "./chat";
+import type { Conversation, Message } from "./chat";
 import type { User } from "./user";
 
 export interface AuthState {
@@ -33,15 +32,16 @@ export interface ChatState {
     string,
     {
       items: Message[];
-      hasMore: boolean;
-      nextCursor?: string | null;
+      hasMore: boolean; // infinite-scroll
+      nextCursor?: string | null; // phân trang
     }
   >;
   activeConversationId: string | null;
   convoLoading: boolean;
   messageLoading: boolean;
   reset: () => void;
+
   setActiveConversation: (id: string | null) => void;
-  fetchConversation: () => Promise<void>;
+  fetchConversations: () => Promise<void>;
   fetchMessages: (conversationId?: string) => Promise<void>;
 }

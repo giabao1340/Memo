@@ -23,7 +23,7 @@ export const useChatStore = create<ChatState>()(
           setActiveConversation: (id) => set({ activeConversationId: id }),
         });
       },
-      fetchConversation: async () => {
+      fetchConversations: async () => {
         try {
           set({ convoLoading: true });
           const { conversations } = await chatService.fetchConversatons();
@@ -41,14 +41,14 @@ export const useChatStore = create<ChatState>()(
         if (!convoId) return;
         const current = messages?.[convoId];
         const nextCursor =
-          current.nextCursor === undefined ? "" : current.nextCursor;
+          current?.nextCursor === undefined ? "" : current?.nextCursor;
 
         if (nextCursor === null) return;
 
         set({ messageLoading: true });
 
         try {
-          const { messages: fetched, cursor } = await chatService.fechMessages(
+          const { messages: fetched, cursor } = await chatService.fetchMessages(
             convoId,
             nextCursor,
           );
@@ -63,16 +63,20 @@ export const useChatStore = create<ChatState>()(
             const merged =
               prev.length > 0 ? [...processed, ...prev] : processed;
             return {
-              ...state.messages,
-              [convoId]: {
-                items: merged,
-                hasMore: !!cursor,
-                nextCursor: cursor ?? null,
+              messages: {
+                ...state.messages,
+                [convoId]: {
+                  items: merged,
+                  hasMore: !!cursor,
+                  nextCursor: cursor ?? null,
+                },
               },
             };
           });
         } catch (error) {
           console.error("Lỗi xãy ra khi fetch tin nhắn", error);
+        } finally {
+          set({ messageLoading: false });
         }
       },
     }),
