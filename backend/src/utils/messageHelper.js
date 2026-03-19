@@ -22,7 +22,8 @@ export const updateConversationAfterCreateMessage = (
     });
 };
 
-export const emitNewMessage = (io, conversation, message) => {
+
+export const emitNewMessage = (io, conversation, message)=> {
     io.to(conversation._id.toString()).emit("new-message", {
         message,
         conversation: {
@@ -31,5 +32,5 @@ export const emitNewMessage = (io, conversation, message) => {
             lastMessageAt: conversation.lastMessageAt,
         },
         unreadCounts: conversation.unreadCounts,
-    });
-};
+    })
+}

@@ -2,9 +2,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import axios from "axios";
 const api = axios.create({
   baseURL:
-    import.meta.env.MODE === "development"
-      ? "http://localhost:5001/api"
-      : "/api",
+    import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 // Thêm interceptor để tự động thêm access token vào header của mỗi request

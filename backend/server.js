@@ -8,13 +8,13 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import friendRoute from './src/routes/friendRoute.js';
 import messageRoute from './src/routes/messageRoute.js';
-import conversationRoute from './src/routes/conversationRoute.js'
-
+import conversationRoute from './src/routes/conversationRoute.js';
+import {app, server, io} from './src/socket/index.js';
 
 
 dotenv.config();
 
-const app = express();
+// const app = express();
 const PORT = process.env.PORT || 5001;
 
 //middleware
@@ -35,7 +35,7 @@ app.use('/api/messages', messageRoute)
 app.use('/api/conversations', conversationRoute);
 
 connectDB().then(() => {
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
         console.log(`Server bắt đầu trên cổng ${PORT}`);
     });
 });

@@ -86,7 +86,6 @@ export const signIn = async (req, res) => {
 export const signOut = async (req, res) => {
     try {
         const refreshToken = req.cookies?.refreshToken;
-        console.log("refreshToken:", refreshToken);
         if (!refreshToken) {
             return res.status(400).json({ message: 'Refresh token không tồn tại' });
         }
