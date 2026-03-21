@@ -9,7 +9,7 @@ interface MessageItemProps {
   index: number;
   messages: Message[];
   selectedConvo: Conversation;
-  lasteMessageStatus: "delivered" | "seen";
+  lastMessageStatus: "delivered" | "seen";
 }
 
 const MessagesItem = ({
@@ -17,7 +17,7 @@ const MessagesItem = ({
   index,
   messages,
   selectedConvo,
-  lasteMessageStatus,
+  lastMessageStatus,
 }: MessageItemProps) => {
   const prev = messages[index - 1];
 
@@ -80,12 +80,12 @@ const MessagesItem = ({
             variant="outline"
             className={cn(
               "text-xs px-1.5 py-0.5 h-4 border-0",
-              lasteMessageStatus === "seen"
+              lastMessageStatus === "seen"
                 ? "bg-primary/20 text-primary"
                 : "bg-muted text-muted-foreground",
             )}
           >
-            {lasteMessageStatus}
+            {lastMessageStatus}
           </Badge>
         )}
       </div>

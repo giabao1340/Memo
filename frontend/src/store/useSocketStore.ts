@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { io, type Socket } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { useAuthStore } from "./useAuthStore";
 import type { SocketState } from "@/types/store";
 import { useChatStore } from "./useChatStore";
@@ -11,24 +11,23 @@ export const useSocketStore = create<SocketState>((set, get) => ({
   connectSocket: () => {
     const accessTokent = useAuthStore.getState().accessToken;
     const existingSocket = get().socket;
+
     if (existingSocket) return;
 
     const socket: Socket = io(baseUrl, {
       auth: { token: accessTokent },
       transports: ["websocket"],
     });
-
     set({ socket });
-
     socket.on("connect", () => {
       console.log("Đã kêt nối với socket");
+      useChatStore.getState().fetchConversations();
     });
     //online users
     socket.on("online-users", (userIds) => {
-      set({onlineUsers: userIds});
+      set({ onlineUsers: userIds });
     });
-
-    socket.on("new-message", ({message, conversation, unreadCount}) =>{
+    socket.on("new-message", ({ message, conversation, unreadCounts }) => {
       useChatStore.getState().addMessage(message);
 
       const lastMessage = {
@@ -38,26 +37,36 @@ export const useSocketStore = create<SocketState>((set, get) => ({
         sender: {
           _id: conversation.lastMessage.senderId,
           displayName: "",
-          avatarUrl: null
-        } 
+          avatarUrl: null,
+        },
       };
 
       const updatedConversation = {
         ...conversation,
         lastMessage,
-        unreadCount
-      }
+        unreadCounts,
+      };
 
-      if(useChatStore.getState
-        ().activeConversationId === message.conversationId
+      if (
+        useChatStore.getState().activeConversationId === message.conversationId
       ) {
-        //danh dau da doc
+        useChatStore.getState().markAsSeen();
       }
       useChatStore.getState().updateConversation(updatedConversation);
-    }
-  
-  ) 
+    });
 
+    socket.on("read-message", ({ conversation, lastMessage }) => {
+      const updated = {
+        _id: conversation._id,
+        lastMessage,
+        lastMessageAt: conversation.lastMessageAt,
+        unreadCounts: conversation.unreadCounts,
+        seenBy: conversation.seenBy,
+      };
+      useChatStore.getState().updateConversation(updated);
+      console.log("conversation:", conversation);
+      console.log("updated:", updated);
+    });
   },
   disconnectSocket: () => {
     const socket = get().socket;
