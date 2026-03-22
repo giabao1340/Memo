@@ -81,7 +81,7 @@ export const createConversation = async (req, res) => {
         return res.status(500).json({ message: "Lỗi hệ thống" });
     }
 };
-export const getConversation = async (req, res) => {
+export const getConversations = async (req, res) => {
     try {
         const userId = req.user._id;
         const conversations = await Conversation.find({
@@ -152,7 +152,7 @@ export const getMessages = async (req, res) => {
 
 }
 
-export const getUersConversationsForSocketIO = async (userId) => {
+export const getUserConversationsForSocketIO  = async (userId) => {
     try {
         const conversations = await Conversation.find(
             { 'participants.userId': userId },

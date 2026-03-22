@@ -20,7 +20,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     });
     set({ socket });
     socket.on("connect", () => {
-      console.log("Đã kêt nối với socket");
+      // console.log("Đã kêt nối với socket");
       useChatStore.getState().fetchConversations();
     });
     //online users
@@ -64,8 +64,8 @@ export const useSocketStore = create<SocketState>((set, get) => ({
         seenBy: conversation.seenBy,
       };
       useChatStore.getState().updateConversation(updated);
-      console.log("conversation:", conversation);
-      console.log("updated:", updated);
+      // console.log("conversation:", conversation);
+      // console.log("updated:", updated);
     });
   },
   disconnectSocket: () => {

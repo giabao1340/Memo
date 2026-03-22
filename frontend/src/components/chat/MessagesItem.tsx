@@ -19,7 +19,7 @@ const MessagesItem = ({
   selectedConvo,
   lastMessageStatus,
 }: MessageItemProps) => {
-  const prev = messages[index - 1];
+  const prev = index + 1 < messages.length ? messages[index + 1] : undefined;
 
   const isGroupBreak =
     index === 0 ||
@@ -33,7 +33,7 @@ const MessagesItem = ({
   return (
     <div
       className={cn(
-        "flex gap-3 message-bounce mt-1",
+        "flex gap-3 message-bounce mt-1 mr-1",
         message.isOwn ? "justify-end" : "justify-start",
       )}
     >
@@ -85,7 +85,7 @@ const MessagesItem = ({
                 : "bg-muted text-muted-foreground",
             )}
           >
-            {lastMessageStatus}
+            {lastMessageStatus === "delivered" ? "Đã gửi" : "Đã nhận"}
           </Badge>
         )}
       </div>

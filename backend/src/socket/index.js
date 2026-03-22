@@ -2,7 +2,7 @@ import { Server } from "socket.io";
 import http from "http";
 import express from "express";
 import { socketAuthMiddleware } from "../middleware/socketMiddleware.js";
-import { getUersConversationsForSocketIO } from "../controllers/conversationController.js";
+import { getUserConversationsForSocketIO } from "../controllers/conversationController.js";
 
 const app = express();
 
@@ -24,7 +24,7 @@ io.on("connection", async (socket) => {
 
     io.emit("online-users", Array.from(onlineUsers.keys()));
 
-    const conversationIds = await getUersConversationsForSocketIO(user._id);
+    const conversationIds = await getUserConversationsForSocketIO(user._id);
 
     conversationIds.forEach((id) => {
         socket.join(id);
@@ -33,7 +33,7 @@ io.on("connection", async (socket) => {
     socket.on("disconnect", () => {
         onlineUsers.delete(user._id);
         io.emit("online-users", Array.from(onlineUsers.keys()))
-        console.log(`socket disconnected: ${socket.id}`);
+        // console.log(`socket disconnected: ${socket.id}`);
     })
 });
 

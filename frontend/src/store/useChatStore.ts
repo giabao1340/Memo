@@ -37,8 +37,11 @@ export const useChatStore = create<ChatState>()(
       fetchMessages: async (conversationId) => {
         const { activeConversationId, messages } = get();
         const { user } = useAuthStore.getState();
+
         const convoId = conversationId ?? activeConversationId;
+
         if (!convoId) return;
+
         const current = messages?.[convoId];
         const nextCursor =
           current?.nextCursor === undefined ? "" : current?.nextCursor;
@@ -62,6 +65,7 @@ export const useChatStore = create<ChatState>()(
             const prev = state.messages[convoId]?.items ?? [];
             const merged =
               prev.length > 0 ? [...processed, ...prev] : processed;
+
             return {
               messages: {
                 ...state.messages,
@@ -74,7 +78,7 @@ export const useChatStore = create<ChatState>()(
             };
           });
         } catch (error) {
-          console.error("Lỗi xãy ra khi fetch tin nhắn", error);
+          console.error("Lỗi xảy ra khi fetchMessages:", error);
         } finally {
           set({ messageLoading: false });
         }
