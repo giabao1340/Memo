@@ -4,6 +4,7 @@ import MessagesItem from "./MessagesItem";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useAuthStore } from "@/store/useAuthStore";
+import { ChevronsDown } from "lucide-react";
 
 const ChatWindowBody = () => {
   const { user } = useAuthStore();
@@ -19,6 +20,7 @@ const ChatWindowBody = () => {
     "delivered" | "seen"
   >("delivered");
   const [isScrollRestored, setIsScrollRestored] = useState(false);
+  const [showScrollDown, setShowScrollDown] = useState(false);
 
   const messages = allMessages[activeConversationId!]?.items ?? [];
   const reversedMessages = [...messages].reverse();
@@ -95,11 +97,15 @@ const ChatWindowBody = () => {
       console.error("Lỗi khi load thêm tin nhắn");
     }
   };
-
+  // Luu vi tri tin nhan
   const handleScrollSave = () => {
     if (isRestoringScroll.current || !isScrollRestored) return;
     const container = containerRef.current;
     if (!container || !activeConversationId) return;
+
+    // Hiện/ẩn nút scroll down (scrollTop âm nên dùng < -600)
+    setShowScrollDown(container.scrollTop < -600);
+
     sessionStorage.setItem(
       key,
       JSON.stringify({
@@ -107,6 +113,11 @@ const ChatWindowBody = () => {
         scrollHeight: container.scrollHeight,
       }),
     );
+  };
+
+  // Thêm method cuộn xuống
+  const scrollToBottom = () => {
+    MessageEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   };
 
   if (!selectedConvo) return <ChatWelComeScreen />;
@@ -132,6 +143,17 @@ const ChatWindowBody = () => {
         }}
         className="flex flex-col-reverse overflow-y-auto overflow-x-hidden beautful-scroll-bar"
       >
+        {showScrollDown && (
+          <button
+            onClick={scrollToBottom}
+            className="z-10 absolute right-6 bottom-20 size-9 rounded-full bg-white shadow-md
+               flex items-center justify-center
+               hover:bg-primary/10 hover:scale-110 transition-all duration-200
+               animate-in fade-in zoom-in-95"
+          >
+            <ChevronsDown className="size-5 text-primary" />
+          </button>
+        )}
         <div ref={MessageEndRef} />
         <InfiniteScroll
           dataLength={messages.length}

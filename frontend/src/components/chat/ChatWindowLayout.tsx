@@ -28,7 +28,8 @@ const ChatWindowLayout = () => {
       }
     }
     markSeen();
-  }, [markAsSeen, selectedConvo])
+  }, [markAsSeen, selectedConvo]);
+  
   if((!selectedConvo)) {
     return <ChatWelComeScreen />
   }
