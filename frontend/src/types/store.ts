@@ -60,6 +60,10 @@ export interface ChatState {
 
   // add message
   addMessage: (message: Message) => Promise<void>;
+  // delete message
+  deleteMessage: (messageId: string) => Promise<void>;
+  // 👇 định nghĩa ở đây
+  removeMessageRealtime: (messageId: string, conversationId: string) => void;
   // update conversation
   updateConversation: (conversation: any) => void;
   markAsSeen: () => Promise<void>;

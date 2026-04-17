@@ -156,6 +156,34 @@ export const useChatStore = create<ChatState>()(
           console.error("Lỗi xãy ra khi add mesasge: ", error);
         }
       },
+
+      removeMessageRealtime: (messageId: string, conversationId: string) => {
+        set((state) => {
+          const prevItems = state.messages[conversationId]?.items ?? [];
+
+          return {
+            messages: {
+              ...state.messages,
+              [conversationId]: {
+                ...state.messages[conversationId],
+                items: prevItems.filter((m) => m._id !== messageId),
+              },
+            },
+          };
+        });
+      },
+
+      deleteMessage: async (messageId: string) => {
+        try {
+          await chatService.deleteMessage(messageId);
+          const convoId = get().activeConversationId;
+          if (!convoId) return;
+
+          get().removeMessageRealtime(messageId, convoId);
+        } catch (error) {
+          console.error(error);
+        }
+      },
       updateConversation: (conversation) => {
         set((state) => ({
           conversations: state.conversations.map((c) =>

@@ -67,6 +67,10 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       // console.log("conversation:", conversation);
       // console.log("updated:", updated);
     });
+    socket.on("delete-message", ({ messageId, conversationId }) => {
+      const { removeMessageRealtime } = useChatStore.getState();
+      removeMessageRealtime(messageId, conversationId);
+    });
   },
   disconnectSocket: () => {
     const socket = get().socket;

@@ -10,6 +10,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { chatService } from "@/services/chatService";
+import { useChatStore } from "@/store/useChatStore";
 
 interface MessageItemProps {
   message: Message;
@@ -38,6 +40,18 @@ const MessagesItem = ({
   const participant = selectedConvo.participants.find(
     (p: Participant) => p._id.toString() === message.senderId.toString(),
   );
+
+  const deleteMessage = useChatStore((state) => state.deleteMessage);
+
+  const handleDeleteMessage = async () => {
+    if (!message._id) return;
+
+    // const confirmDelete = confirm("Bạn có chắc muốn xóa tin nhắn này?");
+    // if (!confirmDelete) return;
+
+    await deleteMessage(message._id);
+  };
+
   return (
     <>
       {/* Timestamp */}
@@ -89,6 +103,7 @@ const MessagesItem = ({
                 <Button
                   variant="ghost"
                   size="sm"
+                  onClick={handleDeleteMessage}
                   className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
                 >
                   <Trash className="size-4 mr-2" />
@@ -159,40 +174,6 @@ const MessagesItem = ({
             </Badge>
           )}
         </div>
-
-        {/* Button bên phải - tin của người khác */}
-        {!message.isOwn && (
-          <div className="self-center pt-1">
-            {" "}
-            {/* self-start thay vì self-center */}
-            <Popover>
-              <PopoverTrigger asChild={false}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="self-center size-7 opacity-0 group-hover/row:opacity-100 transition hover:bg-primary/10"
-                >
-                  <Ellipsis className="size-4" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                side="bottom"
-                align="start"
-                sideOffset={4}
-                className="w-36 p-2"
-              >
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
-                >
-                  <Trash className="size-4 mr-2" />
-                  Xóa
-                </Button>
-              </PopoverContent>
-            </Popover>
-          </div>
-        )}
       </div>
     </>
   );

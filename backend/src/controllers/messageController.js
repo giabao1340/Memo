@@ -85,3 +85,35 @@ export const sendGroupMessage = async (req, res) => {
         return res.status(500).json({ message: "Lỗi hệ thống" });
     }
 };
+
+// messageController.js
+export const deleteMessage = async (req, res) => {
+    try {
+        const { messageId } = req.params;
+        const senderId = req.user._id;
+
+        const message = await Message.findById(messageId);
+
+        if (!message) {
+            return res.status(404).json({ message: "Tin nhắn không tồn tại" });
+        }
+
+        // Chỉ người gửi mới được xóa
+        if (message.senderId.toString() !== senderId.toString()) {
+            return res.status(403).json({ message: "Bạn không có quyền xóa tin nhắn này" });
+        }
+
+        await Message.findByIdAndDelete(messageId);
+
+        // Emit socket để các client khác cập nhật realtime
+        io.to(message.conversationId.toString()).emit("delete-message", {
+            messageId,
+            conversationId: message.conversationId,
+        });
+
+        return res.status(200).json({ message: "Xóa tin nhắn thành công" });
+    } catch (error) {
+        console.error("Lỗi khi xóa tin nhắn:", error);
+        return res.status(500).json({ message: "Lỗi hệ thống" });
+    }
+};

@@ -55,6 +55,10 @@ export const chatService = {
     });
     return res.data.message;
   },
+  async deleteMessage(messageId: string) {
+    const res = await api.delete(`/messages/${messageId}`);
+    return res.data;
+  },
 
   async markAsSeen(conversationId: string) {
     const res = await api.patch(`/conversations/${conversationId}/seen`);
