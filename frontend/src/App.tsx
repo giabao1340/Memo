@@ -8,23 +8,23 @@ import { useThemeStore } from "./store/useThemeStore";
 import { useEffect } from "react";
 import { useAuthStore } from "./store/useAuthStore";
 import { useSocketStore } from "./store/useSocketStore";
+import TestPage from "./pages/TestPage";
 
 function App() {
   const { isDark, setTheme } = useThemeStore();
-  const {accessToken} = useAuthStore();
-  const {connectSocket, disconnectSocket} = useSocketStore();
+  const { accessToken } = useAuthStore();
+  const { connectSocket, disconnectSocket } = useSocketStore();
 
   useEffect(() => {
     setTheme(isDark);
   }, [isDark]);
 
-
   useEffect(() => {
-    if(accessToken) {
+    if (accessToken) {
       connectSocket();
     }
     return () => disconnectSocket();
-  }, [accessToken])
+  }, [accessToken]);
   return (
     <>
       <Toaster></Toaster>
@@ -33,6 +33,7 @@ function App() {
           {/* Public route */}
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/test" element={<TestPage />} />
           {/* Protected route */}
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<ChatAppPage />} />

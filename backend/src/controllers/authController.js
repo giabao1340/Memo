@@ -130,3 +130,11 @@ export const reFreshToken = async (req, res) => {
         res.status(500).json({ message: "Lỗi máy chủ khi làm mới token: " + error.message });
     }
 };
+
+export const test = async (req, res) => {
+    try {
+        res.status(200).json({ message: 'API hoạt động tốt' });
+    } catch (error) {
+        res.status(500).json({ message: "Lỗi máy chủ khi kiểm tra API: " + error.message });
+    }
+};
