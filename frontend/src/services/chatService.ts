@@ -25,28 +25,33 @@ export const chatService = {
   async sendDirectMessage(
     recipientId: string,
     content: string = "",
-    imgUrl?: string,
+    files?: File[],
     conversationId?: string,
   ) {
-    const res = await api.post("/messages/direct", {
-      recipientId,
-      content,
-      imgUrl,
-      conversationId,
-    });
+    const formData = new FormData();
+    formData.append("recipientId", recipientId);
+    formData.append("content", content);
+    if (conversationId) formData.append("conversationId", conversationId);
+    files?.forEach((file) => formData.append("images", file));
 
+    const res = await api.post("/messages/direct", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return res.data.message;
   },
 
   async sendGroupMessage(
     conversationId: string,
     content: string = "",
-    imgUrl?: string,
+    files?: File[],
   ) {
-    const res = await api.post("/messages/group", {
-      conversationId,
-      content,
-      imgUrl,
+    const formData = new FormData();
+    formData.append("conversationId", conversationId);
+    formData.append("content", content);
+    files?.forEach((file) => formData.append("images", file));
+
+    const res = await api.post("/messages/group", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
     return res.data.message;
   },

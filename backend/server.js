@@ -9,7 +9,7 @@ import cors from 'cors';
 import friendRoute from './src/routes/friendRoute.js';
 import messageRoute from './src/routes/messageRoute.js';
 import conversationRoute from './src/routes/conversationRoute.js';
-import {app, server, io} from './src/socket/index.js';
+import { app, server, io } from './src/socket/index.js';
 
 
 dotenv.config();
@@ -24,7 +24,6 @@ app.use(cors({
     origin: process.env.CLIENT_URL, // Thay đổi nếu frontend chạy trên cổng khác
     credentials: true, // Cho phép gửi cookie
 }));
-
 //public routes
 app.use('/api/auth', authRoute);
 //private routes

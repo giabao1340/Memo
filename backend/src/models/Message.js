@@ -17,8 +17,9 @@ const MessageSchema = new mongooes.Schema(
             type: String,
             trim: true,
         },
-        imgUrl: {
-            type: String,
+        imgUrls: {
+            type: [String],
+            default: [],
         },
 
     },

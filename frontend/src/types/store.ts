@@ -48,13 +48,14 @@ export interface ChatState {
   sendDirectMessage: (
     recipientId: string,
     content: string,
-    imgUrl?: string,
+    files?: File[],
     conversationId?: string,
   ) => Promise<void>;
+
   sendGroupMessage: (
-    ConversationId: string,
+    conversationId: string,
     content: string,
-    imgUrl?: string,
+    files?: File[],
   ) => Promise<void>;
 
   // add message

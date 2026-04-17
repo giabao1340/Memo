@@ -1,9 +1,12 @@
 import express from "express";
 import { sendDirectMessage, sendGroupMessage } from "../controllers/messageController.js";
 import { checkFriendShip, checkGroupMembership } from "../middleware/friendMiddleware.js";
+import { upload } from "../middleware/uploadMiddleware.js";
+
 const router = express.Router();
 
-router.post('/direct', checkFriendShip,sendDirectMessage);
-router.post('/group', checkGroupMembership,  sendGroupMessage);
+// Thứ tự đúng - multer chạy trước
+router.post('/direct', upload.array('images', 5), checkFriendShip, sendDirectMessage);
+router.post('/group', upload.array('images', 5), checkGroupMembership, sendGroupMessage);
 
 export default router;

@@ -8,7 +8,7 @@ export const updateConversationAfterCreateMessage = (
         lastMessageAt: message.createdAt,
         lastMessage: {
             _id: message._id,
-            content: message.content,
+            content: message.content || "Đã gửi một hình ảnh", // fallback khi không có text
             senderId,
             createdAt: message.createdAt,
         },
