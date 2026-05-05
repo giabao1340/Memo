@@ -78,6 +78,7 @@ export const sendGroupMessage = async (req, res) => {
 
         updateConversationAfterCreateMessage(conversation, message, senderId);
         await conversation.save();
+
         emitNewMessage(io, conversation, message);
         return res.status(201).json({ message });
     } catch (error) {
@@ -86,7 +87,6 @@ export const sendGroupMessage = async (req, res) => {
     }
 };
 
-// messageController.js
 export const deleteMessage = async (req, res) => {
     try {
         const { messageId } = req.params;
@@ -98,17 +98,46 @@ export const deleteMessage = async (req, res) => {
             return res.status(404).json({ message: "Tin nhắn không tồn tại" });
         }
 
-        // Chỉ người gửi mới được xóa
         if (message.senderId.toString() !== senderId.toString()) {
             return res.status(403).json({ message: "Bạn không có quyền xóa tin nhắn này" });
         }
 
+        const conversationId = message.conversationId;
+
         await Message.findByIdAndDelete(messageId);
 
-        // Emit socket để các client khác cập nhật realtime
-        io.to(message.conversationId.toString()).emit("delete-message", {
+        // 🔥 TÌM LẠI LAST MESSAGE MỚI
+        const lastMessage = await Message.findOne({ conversationId })
+            .sort({ createdAt: -1 });
+
+        const conversation = await Conversation.findById(conversationId);
+
+        if (lastMessage) {
+            conversation.lastMessage = {
+                _id: lastMessage._id,
+                content: lastMessage.content || "Đã xóa một tin nhắn",
+                senderId: lastMessage.senderId,
+                createdAt: lastMessage.createdAt,
+            };
+            conversation.lastMessageAt = lastMessage.createdAt;
+        } else {
+            // 👉 không còn tin nhắn nào
+            conversation.lastMessage = null;
+            conversation.lastMessageAt = null;
+        }
+
+        await conversation.save();
+
+        // 🔥 emit cả delete + update conversation
+        io.to(conversationId.toString()).emit("delete-message", {
             messageId,
-            conversationId: message.conversationId,
+            conversationId,
+        });
+
+        io.to(conversationId.toString()).emit("conversation-updated", {
+            _id: conversation._id,
+            lastMessage: conversation.lastMessage,
+            lastMessageAt: conversation.lastMessageAt,
         });
 
         return res.status(200).json({ message: "Xóa tin nhắn thành công" });

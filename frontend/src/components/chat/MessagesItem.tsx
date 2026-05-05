@@ -10,8 +10,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { chatService } from "@/services/chatService";
 import { useChatStore } from "@/store/useChatStore";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
 
 interface MessageItemProps {
   message: Message;
@@ -123,32 +124,35 @@ const MessagesItem = ({
           {/* CONTENT */}
           <div className="flex flex-col gap-1">
             {/* ẢNH */}
-            {Array.isArray(message.imgUrls) && message.imgUrls.length > 0 && (
-              <div
-                className={cn(
-                  "flex flex-col gap-2",
-                  message.isOwn ? "items-end" : "items-start",
-                )}
-              >
-                {message.imgUrls.map((url: string, index: number) => (
-                  <Card key={index} className="p-0 border-0 overflow-hidden">
-                    <img
-                      src={url}
-                      alt="Attached"
-                      className="max-w-[400px] h-auto rounded-xl object-cover"
-                    />
-                  </Card>
-                ))}
-              </div>
-            )}
-
+            <PhotoProvider>
+              {Array.isArray(message.imgUrls) && message.imgUrls.length > 0 && (
+                <div
+                  className={cn(
+                    "flex flex-col gap-2",
+                    message.isOwn ? "items-end" : "items-start",
+                  )}
+                >
+                  {message.imgUrls.map((url: string, index: number) => (
+                    <PhotoView key={index} src={url}>
+                      <Card className="p-0 border-0 overflow-hidden cursor-pointer">
+                        <img
+                          src={url}
+                          alt="Attached"
+                          className="max-w-[400px] h-auto rounded-xl object-cover hover:opacity-90 transition"
+                        />
+                      </Card>
+                    </PhotoView>
+                  ))}
+                </div>
+              )}
+            </PhotoProvider>
             {/* TEXT */}
             {message.content && (
               <Card
                 className={cn(
-                  "p-3",
+                  "p-3 w-fit",
                   message.isOwn
-                    ? "chat-bubble-sent border-0"
+                    ? "chat-bubble-sent border-0  border-0 self-end"
                     : "chat-bubble-received",
                 )}
               >

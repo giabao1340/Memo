@@ -18,10 +18,12 @@ import {
 } from "@/components/ui/sidebar";
 import type { User } from "@/types/user";
 import Logout from "../auth/Logout";
+import { useState } from "react";
+import FriendRequestDialog from "../friendRequest/FriendRequestDialog";
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
-
+  const [friendRequestOpen, setfriendRequestOpen] = useState(false);
   return (
     <>
       <SidebarMenu>
@@ -75,7 +77,7 @@ export function NavUser({ user }: { user: User }) {
                   <UserIcon className="text-muted-foreground dark:group-focus:!text-accent-foreground" />
                   Tài Khoản
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setfriendRequestOpen(true)}>
                   <Bell className="text-muted-foreground dark:group-focus:!text-accent-foreground" />
                   Thông Báo
                 </DropdownMenuItem>
@@ -91,6 +93,10 @@ export function NavUser({ user }: { user: User }) {
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
+      <FriendRequestDialog
+        open={friendRequestOpen}
+        setOpen={setfriendRequestOpen}
+      />
     </>
   );
 }

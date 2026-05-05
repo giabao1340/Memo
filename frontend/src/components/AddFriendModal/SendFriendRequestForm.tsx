@@ -1,7 +1,7 @@
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import type { IFormValue } from "../chat/AddFriendModal";
 import { Label } from "../ui/label";
-import { Textarea } from "../ui/textarea";
+import Textarea from "../ui/textarea";
 import { DialogFooter } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { UserPlus } from "lucide-react";

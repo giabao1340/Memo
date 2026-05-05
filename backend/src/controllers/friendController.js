@@ -38,10 +38,10 @@ export const sendFriendRequest = async (req, res) => {
         ]);
 
         if (alreayFriend) {
-            return res.status(400).json({ message: "Hai nguoi da la ban be" })
+            return res.status(400).json({ message: "Hai người đã lf bạn bè" })
         }
         if (existingRequest) {
-            return res.status(400).json({ message: "da co loi moi ket ban dang cho" })
+            return res.status(400).json({ message: "Đã có lời mời kết bạn đang chờ xử lý" })
         }
 
         const resquest = await FriendRequest.create(
@@ -51,7 +51,7 @@ export const sendFriendRequest = async (req, res) => {
                 message,
             }
         );
-        return res.status(201).json({ message: "Da gui yeu cau ket ban thanh cong", resquest })
+        return res.status(201).json({ message: "Đã gửi yêu cầu kết bạn thành công", resquest })
 
     } catch (error) {
         console.error("Error sending friend request:", error);
@@ -137,8 +137,8 @@ export const getAllFriends = async (req, res) => {
                 }
             ]
         })
-            .populate("userA", "_id displayName avataUrl")
-            .populate("userB", "_id displayName avataUrl").lean();
+            .populate("userA", "_id displayName avatarUrl")
+            .populate("userB", "_id displayName avatarUrl").lean();
 
         if (!friendShips.length) {
             return res.status(200).json({ friends: [] })
@@ -159,11 +159,11 @@ export const getFriendRequests = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        const populateFiels = '_id userName avataUrl';
+        const populateFields = '_id username displayName avatarUrl';
 
         const [sent, received] = await Promise.all([
-            FriendRequest.find({ from: userId }).populate("to", populateFiels),
-            FriendRequest.find({ to: userId }).populate("from", populateFiels),
+            FriendRequest.find({ from: userId }).populate("to", populateFields),
+            FriendRequest.find({ to: userId }).populate("from", populateFields),
         ]);
 
         return res.status(200).json({ sent, received });

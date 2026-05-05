@@ -14,7 +14,7 @@ interface SearchFormProps {
   usernameValue: string;
   isFound: boolean | null;
   searchedUsername: string;
-  onSubmit: (e?: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
   onCancel: () => void;
 }
 
@@ -29,9 +29,11 @@ const SearchFrom = ({
   onCancel,
 }: SearchFormProps) => {
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label className="text-sm font-semibold">Tìm bằng username</Label>
+        <Label htmlFor="username" className="text-sm font-semibold">
+          Tìm bằng username
+        </Label>
         <Input
           id="username"
           placeholder="Gõ tên username người bạn cần tìm"
@@ -70,7 +72,10 @@ const SearchFrom = ({
           {loading ? (
             <span>Đang tìm ...</span>
           ) : (
-            <Search className="size-4 mr-2" />
+            <>
+              {" "}
+              <Search className="size-4 mr-2" /> Tìm
+            </>
           )}
         </Button>
       </DialogFooter>
