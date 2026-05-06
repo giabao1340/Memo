@@ -25,16 +25,20 @@ io.on("connection", async (socket) => {
     io.emit("online-users", Array.from(onlineUsers.keys()));
 
     const conversationIds = await getUserConversationsForSocketIO(user._id);
-
+    // Loop và join vào các phòng tương ứng với conversationId
     conversationIds.forEach((id) => {
         socket.join(id);
+    });
+
+    socket.on("join-conversation", (conversationId) => {
+        socket.join(conversationId);
     });
 
     socket.on("disconnect", () => {
         onlineUsers.delete(user._id);
         io.emit("online-users", Array.from(onlineUsers.keys()))
         // console.log(`socket disconnected: ${socket.id}`);
-    })
+    });
 });
 
 export { io, app, server };

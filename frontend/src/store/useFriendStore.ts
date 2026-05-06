@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { create } from "zustand";
 
 export const useFriendStore = create<FriendState>((set, get) => ({
+  friends: [],
   loading: false,
   receivedList: [],
   sentList: [],
@@ -54,7 +55,7 @@ export const useFriendStore = create<FriendState>((set, get) => ({
       set({ loading: true });
       await friendService.acceptRequest(requestId);
       set((state) => ({
-        receivedList: state.receivedList.filter((req) => req.id !== requestId),
+        receivedList: state.receivedList.filter((req) => req._id !== requestId),
       }));
       await get().getAllFriendRequest();
     } catch (error) {
@@ -68,10 +69,22 @@ export const useFriendStore = create<FriendState>((set, get) => ({
       set({ loading: true });
       await friendService.declineRequest(requestId);
       set((state) => ({
-        receivedList: state.receivedList.filter((req) => req.id !== requestId),
+        receivedList: state.receivedList.filter((req) => req._id !== requestId),
       }));
     } catch (error) {
       console.error("Lỗi khi từ chối lời mời kết bạn");
+    } finally {
+      set({ loading: false });
+    }
+  },
+  getFriends: async () => {
+    try {
+      set({ loading: true });
+      const friends = await friendService.getFriendList();
+      set({ friends });
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách bạn bè");
+      set({ friends: [] });
     } finally {
       set({ loading: false });
     }

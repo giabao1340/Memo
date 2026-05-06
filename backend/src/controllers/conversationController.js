@@ -73,7 +73,9 @@ export const createConversation = async (req, res) => {
             joinedAt: p.joinedAt,
         }));
 
-        return res.status(201).json({ conversation })
+        const formatted = { ...conversation.toObject(), participants };
+
+        return res.status(201).json({ conversation: formatted })
 
 
     } catch (error) {
@@ -152,7 +154,7 @@ export const getMessages = async (req, res) => {
 
 }
 
-export const getUserConversationsForSocketIO  = async (userId) => {
+export const getUserConversationsForSocketIO = async (userId) => {
     try {
         const conversations = await Conversation.find(
             { 'participants.userId': userId },
