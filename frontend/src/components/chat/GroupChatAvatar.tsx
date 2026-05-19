@@ -5,7 +5,7 @@ import { Ellipsis } from "lucide-react";
 
 interface GroupChatAvatarProps {
   participants: Participant[];
-  type: "chat" | "sidebar";
+  type: "chat" | "sidebar" | "detail";
 }
 const GroupChatAvatar = ({ participants, type }: GroupChatAvatarProps) => {
   const avatars = [];

@@ -4,7 +4,6 @@ import { MessageCircle, MessageCircleMore, Users } from "lucide-react";
 import { Card } from "../ui/card";
 import UserAvatar from "../chat/UserAvatar";
 import { useChatStore } from "@/store/useChatStore";
-import { fr } from "zod/v4/locales";
 
 const FriendListModal = () => {
   const { friends } = useFriendStore();

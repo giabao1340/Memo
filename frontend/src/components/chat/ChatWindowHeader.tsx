@@ -7,6 +7,16 @@ import UserAvatar from "./UserAvatar";
 import StatusBadge from "./StatusBadge";
 import GroupChatAvatar from "./GroupChatAvatar";
 import { useSocketStore } from "@/store/useSocketStore";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import GroupChatDetails from "./GroupChatDetails";
+import { List } from "lucide-react";
 
 const ChatWindowHeader = ({ chat }: { chat?: Conversation }) => {
   const { conversations, activeConversationId } = useChatStore();
@@ -39,11 +49,25 @@ const ChatWindowHeader = ({ chat }: { chat?: Conversation }) => {
           <div className="relative">
             {chat.type === "direct" ? (
               <>
-                <UserAvatar
-                  type="sidebar"
-                  name={otherUser?.displayName || "Memo"}
-                  avatarUrl={otherUser?.avatarUrl || undefined}
-                />
+                <PhotoProvider>
+                  {otherUser?.avatarUrl ? (
+                    <PhotoView src={otherUser.avatarUrl}>
+                      <div className="cursor-pointer">
+                        <UserAvatar
+                          type="sidebar"
+                          name={otherUser?.displayName || "Memo"}
+                          avatarUrl={otherUser.avatarUrl}
+                        />
+                      </div>
+                    </PhotoView>
+                  ) : (
+                    <UserAvatar
+                      type="sidebar"
+                      name={otherUser?.displayName || "Memo"}
+                      avatarUrl={undefined}
+                    />
+                  )}
+                </PhotoProvider>
                 {/* socket io */}
                 <StatusBadge
                   status={
@@ -65,6 +89,22 @@ const ChatWindowHeader = ({ chat }: { chat?: Conversation }) => {
           <h2 className="font-semibold text-foreground">
             {chat.type === "direct" ? otherUser?.displayName : chat.group.name}
           </h2>
+
+          <Dialog>
+            {chat.type === "group" && (
+              <DialogTrigger className="ml-auto text-sm text-primary">
+                <List />
+              </DialogTrigger>
+            )}
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="justify-center items-center flex gap-2">
+                  Thông tin nhóm
+                </DialogTitle>
+              </DialogHeader>
+              <GroupChatDetails chat={chat} />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </header>

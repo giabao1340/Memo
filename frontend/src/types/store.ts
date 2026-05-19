@@ -6,6 +6,7 @@ export interface AuthState {
   accessToken: string | null;
   user: User | null;
   loading: boolean;
+  setUser: (user: User) => void;
   clearState: () => void;
   signUp: (
     username: string,
@@ -28,6 +29,7 @@ export interface ThemeState {
 }
 
 export interface ChatState {
+  loading: boolean;
   conversations: Conversation[];
   messages: Record<
     string,
@@ -68,7 +70,18 @@ export interface ChatState {
   updateConversation: (conversation: any) => void;
   markAsSeen: () => Promise<void>;
   addConvo: (convo: Conversation) => void;
-  createConversation: (type: "direct" | "group", name: string, memberIds: string[]) => Promise<void>;
+  createConversation: (
+    type: "direct" | "group",
+    name: string,
+    memberIds: string[],
+  ) => Promise<void>;
+  deleteConversation: (conversationId: string) => Promise<void>;
+  leaveGroup: (conversationId: string) => Promise<void>;
+  removeConversation: (conversationId: string) => void;
+  removeMemberFromConversation: (
+    conversationId: string,
+    userId: string,
+  ) => void;
 }
 
 export interface SocketState {
@@ -89,4 +102,8 @@ export interface FriendState {
   acceptRequest: (requestId: string) => Promise<void>;
   declineRequest: (requestId: string) => Promise<void>;
   getFriends: () => Promise<void>;
+}
+
+export interface UserState {
+  updateAvatarUrl: (formData: FormData) => Promise<void>;
 }

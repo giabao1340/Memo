@@ -27,6 +27,13 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     socket.on("online-users", (userIds) => {
       set({ onlineUsers: userIds });
     });
+    socket.on("join-conversation", (conversationId) => {
+      socket.emit("join-conversation", conversationId);
+    });
+
+    socket.on("new-conversation", ({ conversation }) => {
+      useChatStore.getState().addConvo(conversation);
+    });
     socket.on("new-message", ({ message, conversation, unreadCounts }) => {
       useChatStore.getState().addMessage(message);
 
@@ -73,6 +80,28 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     });
     socket.on("conversation-updated", (conversation) => {
       useChatStore.getState().updateConversation(conversation);
+    });
+    // New group
+    socket.on("new-group", (conversation) => {
+      useChatStore.getState().addConvo(conversation);
+      socket.emit("join-conversation", conversation._id);
+    });
+
+    socket.on("conversation-deleted", ({ conversationId }) => {
+      useChatStore.getState().removeConversation(conversationId);
+    });
+
+    socket.on("group-left", ({ conversationId, userId }) => {
+      const currentUser = useAuthStore.getState().user;
+      if (userId.toString() === currentUser?._id.toString()) {
+        // Người rời nhóm → remove conversation
+        useChatStore.getState().removeConversation(conversationId);
+      } else {
+        // Thành viên còn lại → cập nhật participants
+        useChatStore
+          .getState()
+          .removeMemberFromConversation(conversationId, userId);
+      }
     });
   },
   disconnectSocket: () => {

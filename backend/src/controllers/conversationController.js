@@ -75,6 +75,22 @@ export const createConversation = async (req, res) => {
 
         const formatted = { ...conversation.toObject(), participants };
 
+        if (type === "group") {
+            memberIds.forEach((userId) => {
+                io.to(userId).emit("new-group", formatted)
+            })
+        }
+        // Sau khi format xong, emit cho từng participant join room
+        conversation.participants.forEach((p) => {
+            io.to(p.userId._id.toString()).emit("join-conversation", formatted._id.toString());
+        });
+
+        // Emit conversation mới đến các thành viên (trừ người tạo vì họ đã có rồi)
+        memberIds.forEach((memberId) => {
+            io.to(memberId.toString()).emit("new-conversation", { conversation: formatted });
+        });
+
+        return res.status(201).json({ conversation: formatted });
         return res.status(201).json({ conversation: formatted })
 
 
@@ -222,6 +238,75 @@ export const markAsSeen = async (req, res) => {
 
     } catch (error) {
         console.error("🔥 Lỗi khi mark as seen:", error); // 👈 QUAN TRỌNG
+        return res.status(500).json({ message: "Lỗi hệ thống" });
+    }
+};
+
+export const deleteConversation = async (req, res) => {
+    try {
+        const { conversationId } = req.params;
+        const conversation = await Conversation.findById(conversationId);
+
+        if (!conversation) {
+            return res.status(404).json({ message: "Conversation không tồn tại" });
+        }
+
+        await Message.deleteMany({ conversationId });
+        await Conversation.findByIdAndDelete(conversationId);
+
+        // Emit đến từng participant theo userId
+        conversation.participants.forEach((p) => {
+            io.to(p.userId.toString()).emit("conversation-deleted", { conversationId });
+        });
+
+        return res.status(200).json({ message: "Conversation đã được xóa" });
+    } catch (error) {
+        console.error("Lỗi khi xóa conversation:", error);
+        return res.status(500).json({ message: "Lỗi hệ thống" });
+    }
+};
+export const leaveGroup = async (req, res) => {
+    try {
+        const { conversationId } = req.params;
+        const userId = req.user._id;
+        const conversation = await Conversation.findById(conversationId);
+
+        if (!conversation) {
+            return res.status(404).json({ message: "Conversation không tồn tại" });
+        }
+
+        if (conversation.type !== "group") {
+            return res.status(400).json({ message: "Chỉ có thể rời nhóm trong conversation type group" });
+        }
+
+        conversation.participants = conversation.participants.filter(
+            (p) => p.userId.toString() !== userId.toString()
+        );
+        conversation.seenBy = conversation.seenBy.filter(
+            (id) => id.toString() !== userId.toString()
+        );
+        if (conversation.unreadCounts) {
+            conversation.unreadCounts.delete(userId.toString());
+        }
+
+        // Nếu không còn thành viên nào thì xóa luôn conversation
+        if (conversation.participants.length === 0) {
+            await Message.deleteMany({ conversationId });
+            await Conversation.findByIdAndDelete(conversationId);
+            io.to(userId.toString()).emit("conversation-deleted", { conversationId });
+            return res.status(200).json({ message: "Đã xóa nhóm vì không còn thành viên" });
+        }
+
+        await conversation.save();
+
+        io.to(userId.toString()).emit("group-left", { conversationId, userId });
+        conversation.participants.forEach((p) => {
+            io.to(p.userId.toString()).emit("group-left", { conversationId, userId });
+        });
+
+        return res.status(200).json({ message: "Đã rời nhóm" });
+    } catch (error) {
+        console.error("Lỗi khi rời nhóm:", error);
         return res.status(500).json({ message: "Lỗi hệ thống" });
     }
 };

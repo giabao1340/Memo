@@ -8,6 +8,7 @@ import { useSocketStore } from "./useSocketStore";
 export const useChatStore = create<ChatState>()(
   persist(
     (set, get) => ({
+      loading: false,
       conversations: [],
       messages: {},
       activeConversationId: null,
@@ -245,14 +246,72 @@ export const useChatStore = create<ChatState>()(
           };
         });
       },
-      createConversation: async(type, name, memberIds) =>{
+      createConversation: async (type, name, memberIds) => {
         try {
-          const conversation = await chatService.createConversation(type, name, memberIds);
-          get().addConvo(conversation);
-          useSocketStore.getState().socket?.emit("join-conversation", conversation._id);
+          set({ loading: true });
+          const conversation = await chatService.createConversation(
+            type,
+            name,
+            memberIds,
+          );
+          get().addConvo(conversation); // chỉ add cho người tạo, các thành viên khác nhận qua socket
         } catch (error) {
           console.error("Lỗi khi tạo cuộc trò chuyện:", error);
+        } finally {
+          set({ loading: false });
         }
+      },
+      deleteConversation: async (conversationId) => {
+        try {
+          set({ loading: true });
+          await chatService.deleteConversation(conversationId);
+          // Không cần update state, socket "conversation-deleted" sẽ xử lý
+        } catch (error) {
+          console.error("Lỗi khi xóa cuộc trò chuyện:", error);
+          throw error;
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      leaveGroup: async (conversationId) => {
+        try {
+          set({ loading: true });
+          await chatService.leaveGroup(conversationId);
+          // Không cần update state, socket "group-left" sẽ xử lý
+        } catch (error) {
+          console.error("Lỗi khi rời nhóm:", error);
+          throw error;
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      removeConversation: (conversationId) => {
+        set((state) => ({
+          conversations: state.conversations.filter(
+            (c) => c._id !== conversationId,
+          ),
+          activeConversationId:
+            state.activeConversationId === conversationId
+              ? null
+              : state.activeConversationId,
+        }));
+      },
+
+      removeMemberFromConversation: (conversationId, userId) => {
+        set((state) => ({
+          conversations: state.conversations.map((c) =>
+            c._id === conversationId
+              ? {
+                  ...c,
+                  participants: c.participants.filter(
+                    (p) => p._id.toString() !== userId.toString(),
+                  ),
+                }
+              : c,
+          ),
+        }));
       },
     }),
     {
