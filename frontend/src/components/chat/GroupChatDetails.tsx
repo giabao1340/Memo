@@ -1,4 +1,4 @@
-import type { Conversation } from "@/types/chat";
+import type { Conversation, Participant } from "@/types/chat";
 import GroupChatAvatar from "./GroupChatAvatar";
 import { Button } from "../ui/button";
 import {
@@ -10,7 +10,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "../ui/sidebar";
 import {
@@ -22,9 +21,30 @@ import {
 import { useChatStore } from "@/store/useChatStore";
 import { toast } from "sonner";
 import { Card } from "../ui/card";
+import { useState } from "react";
+import SendFriendRequestForm from "../addFriendModal/SendFriendRequestForm";
+import { useFriendStore } from "@/store/useFriendStore";
+import { useForm } from "react-hook-form";
+import type { IFormValue } from "./AddFriendModal";
 
 const GroupChatDetails = ({ chat }: { chat: Conversation }) => {
   const { deleteConversation } = useChatStore();
+  const [selectedUser, setSelectedUser] = useState<Participant | null>(null);
+  const { register, handleSubmit } = useForm<IFormValue>({
+    defaultValues: { username: "", message: "" },
+  });
+  const { addFriend, loading } = useFriendStore();
+
+  const handleSend = handleSubmit(async (data) => {
+    if (!selectedUser) return;
+    try {
+      const message = await addFriend(selectedUser._id, data.message.trim());
+      toast.success(message);
+      setSelectedUser(null);
+    } catch (error) {
+      toast.error("Lỗi khi gửi lời mời kết bạn");
+    }
+  });
 
   const handleLeaveGroup = async () => {
     try {
@@ -41,7 +61,9 @@ const GroupChatDetails = ({ chat }: { chat: Conversation }) => {
         <h2 className="font-semibold text-foreground text-2xl">
           {chat.group.name}
         </h2>
-        <p className="text-sm text-muted-foreground">{chat.createdAt}</p>
+        <p className="text-sm text-muted-foreground">
+          {chat.participants.length} thành viên
+        </p>
       </div>
       <div className="p-4 flex flex-col gap-4">
         <Collapsible asChild className="group/collapsible">
@@ -71,15 +93,8 @@ const GroupChatDetails = ({ chat }: { chat: Conversation }) => {
 
                           {/* Action Icon */}
                           <button
-                            className="
-                  flex items-center justify-center
-                  w-9 h-9 rounded-full
-                  bg-muted/60 hover:bg-primary
-                  text-muted-foreground hover:text-white
-                  transition-all duration-200
-                  hover:scale-105 active:scale-95
-                  shadow-sm
-                "
+                            onClick={() => setSelectedUser(p)}
+                            className="flex items-center justify-center w-9 h-9 rounded-full bg-muted/60 hover:bg-primary text-muted-foreground hover:text-white transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm"
                           >
                             <UserRoundPlus size={18} strokeWidth={2.2} />
                           </button>
@@ -101,6 +116,15 @@ const GroupChatDetails = ({ chat }: { chat: Conversation }) => {
           <TriangleAlert className="mr-2" /> Rời nhóm
         </Button>
       </div>
+      {selectedUser && (
+        <SendFriendRequestForm
+          register={register}
+          loading={loading}
+          searchedUsername={selectedUser.displayName}
+          onSubmit={handleSend}
+          onBack={() => setSelectedUser(null)}
+        />
+      )}
     </div>
   );
 };

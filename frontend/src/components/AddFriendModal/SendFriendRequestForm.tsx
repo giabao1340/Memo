@@ -25,9 +25,8 @@ const SendFriendRequestForm = ({
     <form onSubmit={onSubmit} className="space-y-4">
       <div>
         <span className="success-message">
-          Tìm thấy
-          <span className="font-semibold">@{searchedUsername}</span>
-          rồi 🎉🎉
+          Kết bạn với
+          <span className="font-semibold"> @{searchedUsername} </span>?
         </span>
         <div className="space-y-2">
           <Label htmlFor="message" className="text-sm font-semibold">

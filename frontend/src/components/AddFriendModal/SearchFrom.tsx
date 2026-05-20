@@ -58,7 +58,7 @@ const SearchFrom = ({
           <Button
             type="button"
             variant="outline"
-            className="flex-1 goass hover:text-destructive"
+            className="flex-1 goass hover:text-destructive hover:bg-destructive/10 transition-smooth"
             onClick={onCancel}
           >
             Cancel
