@@ -8,8 +8,9 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFriendStore } from "@/store/useFriendStore";
-import ReceivedRequests from "./receivedRequests";
-import SendRequests from "./sendRequests";
+import ReceivedRequests from "./ReceivedRequests";
+import SendRequests from "./SendRequests";
+
 interface FriendRequestDialogProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
