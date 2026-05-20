@@ -22,7 +22,7 @@ import { useChatStore } from "@/store/useChatStore";
 import { toast } from "sonner";
 import { Card } from "../ui/card";
 import { useState } from "react";
-import SendFriendRequestForm from "../addFriendModal/SendFriendRequestForm";
+import SendFriendRequestForm from "../AddFriendModal/SendFriendRequestForm";
 import { useFriendStore } from "@/store/useFriendStore";
 import { useForm } from "react-hook-form";
 import type { IFormValue } from "./AddFriendModal";
