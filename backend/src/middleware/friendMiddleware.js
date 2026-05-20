@@ -1,5 +1,5 @@
 import Conversation from "../models/Conversation.js";
-import Friend from "../models/friend.js";
+import Friend from "../models/Friend.js";
 
 const pair = (a, b) => (a < b ? [a, b] : [b, a]);
 
