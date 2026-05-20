@@ -1,4 +1,4 @@
-import Friend from "../models/friend.js";
+import Friend from "../models/Friend.js";
 import User from "../models/User.js";
 import FriendRequest from "../models/FriendRequest.js";
 
