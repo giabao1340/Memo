@@ -265,6 +265,58 @@ export const deleteConversation = async (req, res) => {
         return res.status(500).json({ message: "Lỗi hệ thống" });
     }
 };
+
+export const inviteMembers = async (req, res) => {
+    try {
+        const { conversationId } = req.params;
+        const { memberIds } = req.body;
+        const userId = req.user._id;
+        const conversation = await Conversation.findById(conversationId);
+        if (!conversation) {
+            return res.status(404).json({ message: "Conversation không tồn tại" });
+        }
+        if (conversation.type !== "group") {
+            return res.status(400).json({ message: "Chỉ có thể mời thành viên trong conversation type group" });
+        }
+
+        const newParticipants = memberIds
+            .filter((id) => !conversation.participants.some((p) => p.userId.toString() === id))
+            .map((id) => ({ userId: id }));
+
+        conversation.participants.push(...newParticipants);
+        await conversation.save();
+
+        // ✅ Lấy SAU khi đã push newParticipants
+        const allParticipantIds = conversation.participants.map((p) => p.userId.toString());
+        // Populate thông tin user sau khi save
+        const populated = await Conversation.findById(conversationId)
+            .populate("participants.userId", "displayName avatarUrl username");
+
+        const formatted = {
+            ...populated.toObject(),
+            participants: populated.participants.map((p) => ({
+                _id: p.userId._id,
+                displayName: p.userId.displayName,
+                avatarUrl: p.userId.avatarUrl,
+                username: p.userId.username,
+                joinedAt: p.joinedAt,
+            })),
+        };
+
+        allParticipantIds.forEach((id) => {
+            io.to(id.toString()).emit("invite-members", {
+                conversation: formatted,
+                newMembers: newParticipants.map((p) => p.userId),
+            });
+        }
+        );
+        return res.status(200).json({ message: "Đã mời thành viên mới vào nhóm" });
+    } catch (error) {
+        console.error("Lỗi khi mời thành viên vào nhóm:", error);
+        return res.status(500).json({ message: "Lỗi hệ thống" });
+    }
+};
+
 export const leaveGroup = async (req, res) => {
     try {
         const { conversationId } = req.params;

@@ -79,6 +79,13 @@ export const chatService = {
     return res.data;
   },
 
+  async addGroupMembers(conversationId: string, memberIds: string[]) {
+    const res = await api.patch(`/conversations/${conversationId}/invite`, {
+      memberIds,
+    });
+    return res.data;
+  },
+
   async leaveGroup(conversationId: string) {
     const res = await api.patch(`/conversations/${conversationId}/leave`);
     return res.data;

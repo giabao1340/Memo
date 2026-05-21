@@ -27,10 +27,11 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     socket.on("online-users", (userIds) => {
       set({ onlineUsers: userIds });
     });
-    socket.on("join-conversation", (conversationId) => {
-      socket.emit("join-conversation", conversationId);
+    socket.on("invite-members", ({ conversation }) => {
+      useChatStore.getState().updateConversationMembers(conversation);
+      // Join room của conversation mới
+      socket.emit("join-conversation", conversation._id);
     });
-
     socket.on("new-conversation", ({ conversation }) => {
       useChatStore.getState().addConvo(conversation);
     });
@@ -90,7 +91,6 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     socket.on("conversation-deleted", ({ conversationId }) => {
       useChatStore.getState().removeConversation(conversationId);
     });
-
     socket.on("group-left", ({ conversationId, userId }) => {
       const currentUser = useAuthStore.getState().user;
       if (userId.toString() === currentUser?._id.toString()) {

@@ -3,7 +3,6 @@ import type { ChatState } from "@/types/store";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useAuthStore } from "./useAuthStore";
-import { useSocketStore } from "./useSocketStore";
 
 export const useChatStore = create<ChatState>()(
   persist(
@@ -312,6 +311,39 @@ export const useChatStore = create<ChatState>()(
               : c,
           ),
         }));
+      },
+      // Đổi tên để tránh nhầm lẫn - đây là action cập nhật state local
+      addGroupMembers: async (conversationId: string, memberIds: string[]) => {
+        try {
+          set({ loading: true });
+          await chatService.addGroupMembers(conversationId, memberIds);
+          // Không cần cập nhật state ở đây
+          // vì socket "invite-members" sẽ tự cập nhật realtime
+        } catch (error) {
+          console.error("Lỗi khi thêm thành viên vào nhóm:", error);
+          throw error;
+        } finally {
+          set({ loading: false });
+        }
+      },
+      updateConversationMembers: (conversation) => {
+        const { conversations } = get();
+
+        const exists = conversations.some((c) => c._id === conversation._id);
+
+        if (exists) {
+          // Cập nhật conversation đã có
+          set({
+            conversations: conversations.map((c) =>
+              c._id === conversation._id ? conversation : c,
+            ),
+          });
+        } else {
+          // Thêm conversation mới vào danh sách
+          set({
+            conversations: [conversation, ...conversations],
+          });
+        }
       },
     }),
     {

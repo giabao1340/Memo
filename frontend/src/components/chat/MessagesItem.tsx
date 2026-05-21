@@ -30,14 +30,15 @@ const MessagesItem = ({
   lastMessageStatus,
 }: MessageItemProps) => {
   const prev = index + 1 < messages.length ? messages[index + 1] : undefined;
+
   const isShowTime =
-    index === 0 ||
-    new Date(message.createdAt).getTime() -
-      new Date(prev?.createdAt || 0).getTime() >
-      3000; // Hơn 5 phút thì tách tin nhắn
+    index === messages.length - 1 || // tin nhắn cũ nhất luôn hiện time
+    new Date(prev?.createdAt || 0).getTime() -
+      new Date(message.createdAt).getTime() >
+      5 * 60 * 1000; // 5 phút (3000ms quá ngắn)
 
-  const isGroupBreak = isShowTime || message.senderId != prev?.senderId;
-
+  const isGroupBreak = isShowTime || message.senderId !== prev?.senderId;
+  console.log("Render MessageItem", { content: message.content, isGroupBreak });
   const participant = selectedConvo.participants.find(
     (p: Participant) => p._id.toString() === message.senderId.toString(),
   );
@@ -54,9 +55,8 @@ const MessagesItem = ({
   };
 
   return (
-    <>
-      {/* Timestamp */}
-      {isGroupBreak && (
+    <div>
+      {isShowTime && (
         <span className="flex justify-center text-xs text-muted-foreground px-1">
           {formatMessageTime(new Date(message.createdAt))}
         </span>
@@ -179,7 +179,7 @@ const MessagesItem = ({
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

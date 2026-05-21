@@ -75,6 +75,11 @@ export interface ChatState {
     name: string,
     memberIds: string[],
   ) => Promise<void>;
+  updateConversationMembers: (conversation: Conversation) => void;
+  addGroupMembers: (
+    conversationId: string,
+    memberIds: string[],
+  ) => Promise<void>;
   deleteConversation: (conversationId: string) => Promise<void>;
   leaveGroup: (conversationId: string) => Promise<void>;
   removeConversation: (conversationId: string) => void;

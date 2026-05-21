@@ -15,6 +15,7 @@ import {
 import {
   ChevronRight,
   TriangleAlert,
+  UserPlus,
   UserRoundPlus,
   Users2,
 } from "lucide-react";
@@ -26,6 +27,15 @@ import SendFriendRequestForm from "../AddFriendModal/SendFriendRequestForm";
 import { useFriendStore } from "@/store/useFriendStore";
 import { useForm } from "react-hook-form";
 import type { IFormValue } from "./AddFriendModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import FriendList from "./FriendList";
 
 const GroupChatDetails = ({ chat }: { chat: Conversation }) => {
   const { deleteConversation } = useChatStore();
@@ -108,6 +118,22 @@ const GroupChatDetails = ({ chat }: { chat: Conversation }) => {
           </SidebarMenuItem>
         </Collapsible>
 
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="w-full" onClick={() => {}}>
+              <UserPlus className="mr-2" /> Mời thành viên
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Mời thành viên vào nhóm</DialogTitle>
+            </DialogHeader>
+            <DialogDescription>
+              Chọn thành viên bạn muốn mời vào nhóm.
+            </DialogDescription>
+            <FriendList chat={chat} />
+          </DialogContent>
+        </Dialog>
         <Button
           variant="destructive"
           className="w-full"
