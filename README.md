@@ -278,16 +278,16 @@ cd backend
 npm install
 ` \* Create a `.env` file in the `server` directory and add the following:
 
-            ```env
-            PORT = 5001
-            MONGODB_CONNECTIONSTRING = "Your_mongodb_connect_string"
-            CLIENT_URL = http://localhost:5173
-            ACCESS_TOKEN_SECRET = "Your_access_token_secret"
+                ```env
+                PORT = 5001
+                MONGODB_CONNECTIONSTRING = "Your_mongodb_connect_string"
+                CLIENT_URL = http://localhost:5173
+                ACCESS_TOKEN_SECRET = "Your_access_token_secret"
 
-            CLOUDINARY_CLOUD_NAME = "your_cloudinary_name"
-            CLOUDINARY_API_KEY = "your_cloudinary_api_key"
-            CLOUDINARY_API_SECRET = "Your_cloudinary_api_serect"
-            ```
+                CLOUDINARY_CLOUD_NAME = "your_cloudinary_name"
+                CLOUDINARY_API_KEY = "your_cloudinary_api_key"
+                CLOUDINARY_API_SECRET = "Your_cloudinary_api_serect"
+                ```
 
 ````
 
@@ -517,7 +517,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Contact
 
-Gia Bảo (Coide) - - luonggiabao060904@ggmail.com.com
+Gia Bảo (Codie) - - luonggiabao060904@ggmail.com.com
 
 Project Link: [(https://github.com/giabao1340/Memo)]
 
