@@ -28,12 +28,12 @@
 - **[Socket.IO](https://socket.io/):** Enables real-time, bidirectional and event-based communication.
 - **[MongoDB](https://www.mongodb.com/):** A NoSQL database for storing user profiles and chat history.
 - **[Mongoose](https://mongoosejs.com/):** Elegant MongoDB object modeling for Node.js.
-- **[JSON Web Tokens (JWT)](https://jwt.io/):** For securely transmitting information between parties as 
-a JSON object.
+- **[JSON Web Tokens (JWT)](https://jwt.io/):** For securely transmitting information between parties as
+  a JSON object.
 - **[Cloudinary](https://cloudinary.com/):** Upload image mesage and avatar url
 
-
 ## 📁 Project Structure
+
 ```
 memo-chat-app/
 |   .gitignore
@@ -278,16 +278,16 @@ cd backend
 npm install
 ` \* Create a `.env` file in the `server` directory and add the following:
 
-    ```env
-    PORT = 5001
-    MONGODB_CONNECTIONSTRING = "Your_mongodb_connect_string"
-    CLIENT_URL = http://localhost:5173
-    ACCESS_TOKEN_SECRET = "Your_access_token_secret"
+            ```env
+            PORT = 5001
+            MONGODB_CONNECTIONSTRING = "Your_mongodb_connect_string"
+            CLIENT_URL = http://localhost:5173
+            ACCESS_TOKEN_SECRET = "Your_access_token_secret"
 
-    CLOUDINARY_CLOUD_NAME = "your_cloudinary_name"
-    CLOUDINARY_API_KEY = "your_cloudinary_api_key"
-    CLOUDINARY_API_SECRET = "Your_cloudinary_api_serect"
-    ```
+            CLOUDINARY_CLOUD_NAME = "your_cloudinary_name"
+            CLOUDINARY_API_KEY = "your_cloudinary_api_key"
+            CLOUDINARY_API_SECRET = "Your_cloudinary_api_serect"
+            ```
 
 ````
 
@@ -519,7 +519,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Gia Bảo (Coide) - - luonggiabao060904@ggmail.com.com
 
-Project Link: [(https://github.com/giabao1340/Mem)]
+Project Link: [(https://github.com/giabao1340/Memo)]
+
 Demo Link: [(https://memo-eta-eight.vercel.app/)]
 
 ---
