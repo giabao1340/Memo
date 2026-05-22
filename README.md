@@ -52,7 +52,6 @@ memo-chat-app/
 |   |   server.js
 |   |
 |   +---coverage
-
 |   |
 |   +---node_modules
 |   |
