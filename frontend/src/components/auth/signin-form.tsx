@@ -7,7 +7,7 @@ import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 const SigninFormSchema = z.object({
   username: z.string().min(1, "Tên người dùng không được để trống"),
   password: z.string().min(1, "Mật khẩu không được để trống"),
@@ -95,12 +95,12 @@ export function SigninForm({
               </Button>
               <div className="text-center text-sm">
                 Chưa có tài khoản?{" "}
-                <a
-                  href="/signup"
+                <Link
+                  to="/signup"
                   className="text-primary underline underline-offset-4"
                 >
                   Đăng ký
-                </a>
+                </Link>
               </div>
             </div>
           </form>
